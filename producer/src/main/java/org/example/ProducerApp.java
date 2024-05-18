@@ -10,27 +10,27 @@ import java.util.Properties;
 
 /**
  * Hello world!
- *
  */
 
 
-public class App 
-{
-    public static void main( String[] args ) throws InterruptedException
-    {
+public class ProducerApp {
+    public static void main(String[] args) throws InterruptedException {
         final Properties properties = new Properties();
         final int NUMBER_OF_RECORD = 1000;
         final long PAUSE_MILLIS = 1000L;
+        final String topicName = "iot-data";
+
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "broker:9092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-
-
         try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties)) {
             for (int i = 0; i < NUMBER_OF_RECORD; i++) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>("lab", "Hello World : " + i);
-                kafkaProducer.send(producerRecord, App::callBack);
+                String key = "sensor-" + i;
+                String value = "Temperature: " + (Math.random() * 100);
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, key, value);
+                System.out.println("Produced message: (" + key + ", " + value + ")");
+                kafkaProducer.send(producerRecord, ProducerApp::callBack);
                 Thread.sleep(PAUSE_MILLIS);
             }
         }
