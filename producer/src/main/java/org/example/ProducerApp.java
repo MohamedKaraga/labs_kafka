@@ -7,6 +7,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
+import java.util.Random;
 
 /**
  * Hello world!
@@ -18,7 +19,9 @@ public class ProducerApp {
         final Properties properties = new Properties();
         final int NUMBER_OF_RECORD = 1000;
         final long PAUSE_MILLIS = 1000L;
-        final String topicName = "iot-data";
+        final int MIN = 1;
+        final int MAX = 500;
+        final String topicName = "vehicle-count";
 
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "broker:9092");
@@ -27,8 +30,10 @@ public class ProducerApp {
         try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties)) {
             for (int i = 0; i < NUMBER_OF_RECORD; i++) {
                 String key = "sensor-" + i;
-                String value = "Temperature: " + (Math.random() * 100);
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, key, value);
+                Random random = new Random();
+                int value = random.nextInt(MAX - MIN) + MIN;;
+
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, key, String.valueOf(value));
                 System.out.println("Produced message: (" + key + ", " + value + ")");
                 kafkaProducer.send(producerRecord, ProducerApp::callBack);
                 Thread.sleep(PAUSE_MILLIS);
@@ -40,7 +45,7 @@ public class ProducerApp {
         if (e != null) {
             System.out.println("Error occurs : " + e.getMessage());
         } else {
-            System.out.println("recordMetadata : " + recordMetadata.toString());
+            System.out.println("ack : " + recordMetadata.toString());
         }
     }
 }
