@@ -4,7 +4,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 import java.util.Random;
@@ -15,28 +14,25 @@ import java.util.Random;
 
 
 public class ProducerApp {
-    public static void main(String[] args) throws InterruptedException {
-        final Properties properties = new Properties();
-        final int NUMBER_OF_RECORD = 1000;
-        final long PAUSE_MILLIS = 1000L;
+    public static void main(String[] args) {
+        final int NUMBER_OF_RECORD = 1000000;
         final int MIN = 1;
         final int MAX = 500;
         final String topicName = "vehicle-count";
 
+        final Properties configs = new Properties();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, );
+        configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, );
+        configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, );
 
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "broker:9092");
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties)) {
+        try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>()) {
             for (int i = 0; i < NUMBER_OF_RECORD; i++) {
                 String key = "sensor-" + i;
-                Random random = new Random();
-                int value = random.nextInt(MAX - MIN) + MIN;;
+                int value = new Random().nextInt(MAX - MIN) + MIN;;
 
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, key, String.valueOf(value));
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>();
                 System.out.println("Produced message: (" + key + ", " + value + ")");
-                kafkaProducer.send(producerRecord, ProducerApp::callBack);
-                Thread.sleep(PAUSE_MILLIS);
+                kafkaProducer.send();
             }
         }
     }
@@ -45,7 +41,7 @@ public class ProducerApp {
         if (e != null) {
             System.out.println("Error occurs : " + e.getMessage());
         } else {
-            System.out.println("ack : " + recordMetadata.toString());
+            System.out.println("ack : " + recordMetadata);
         }
     }
 }
