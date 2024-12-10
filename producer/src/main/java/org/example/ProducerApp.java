@@ -14,7 +14,7 @@ import java.util.Random;
 
 
 public class ProducerApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         final int NUMBER_OF_RECORD = 1000000;
         final int MIN = 1;
         final int MAX = 500;
@@ -33,6 +33,7 @@ public class ProducerApp {
                 ProducerRecord<String, String> producerRecord = new ProducerRecord<>();
                 System.out.println("Produced message: (" + key + ", " + value + ")");
                 kafkaProducer.send();
+                Thread.sleep(1000);
             }
         }
     }
@@ -41,7 +42,7 @@ public class ProducerApp {
         if (e != null) {
             System.out.println("Error occurs : " + e.getMessage());
         } else {
-            System.out.println("ack : " + recordMetadata);
+            System.out.println("ack --> offset : " + recordMetadata.offset());
         }
     }
 }
