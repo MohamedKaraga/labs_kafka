@@ -107,7 +107,7 @@ _**Ouvrez des fenêtres de terminal séparées pour les étapes suivantes**_
 1. Téléchargez ou copiez le contenu du fichier Docker Compose de la plateforme Confluent en mode KRaft
 
    ```bash
-    wget https://raw.githubusercontent.com/MohamedKaraga/labs/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/MohamedKaraga/labs_kafka/refs/heads/master/docker-compose.yml
    ```
 
 2. Analysez le fichier Docker Compose
