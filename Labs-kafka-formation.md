@@ -631,13 +631,8 @@ _**Ouvrez des fenêtres de terminal séparées pour les étapes suivantes**_
    docker-compose up -d broker control-center
    ```
 5. Construire et exécuter kafkastream
-6. Avancé : appliquez une agrégation avec fenêtre pour compter le nombre de véhicules toutes les 1 minute
 
-Transformez l'application Kafka Streams pour utiliser des opérations avec fenêtres,
-Pour cet exercice, supposons que vous souhaitez utiliser des fenêtres `tumbling` pour compter le nombre de véhicules dans une fenêtre temporelle donnée
-et générer des alertes de congestion basées sur les comptages dans chaque fenêtre.
-
-7. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
+6. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
 
    ```bash
    docker-compose down -v
@@ -732,17 +727,7 @@ et générer des alertes de congestion basées sur les comptages dans chaque fen
    SELECT * FROM user_counts EMIT CHANGES;
    ```
 
-11. Extra challenge
-   * `Kafka Connect`: Utilisez Kafka Connect pour diffuser les données de votre base de données PostgreSQL vers un topic Kafka `users`.
-   * `ksqlDB`: utilisez ksqlDB pour créer un stream à partir de ce topic et exécuter des requêtes SQL en temps réel pour traiter et analyser les données. 
-   * `Steps`: 
-     * Deployer Kafka Connect (`JDBC Source Connector lab 07`) pour diffuser des données dans Kafka 
-     * Faire une requette ksqlDB `users_stream` pour voir les données en mode `push`
-
-La dernière étape :) Changez la connexion JDBC Kafka (utilisez le mode `timestamp+incrementing`) pour traiter les données `insert` et `update`.
-
-
-12. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
+11. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
 
    ```bash
    docker-compose down -v
