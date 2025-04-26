@@ -140,6 +140,13 @@ _**Ouvrez des fenêtres de terminal séparées pour les étapes suivantes**_
 7. Exécutez `kafka-console-producer` pour produire un message dans le topic `foo`:
    ```bash
    kafka-console-producer --bootstrap-server kafka:9092 --topic foo
+   ```
+   Exemple
+
+   ```bash
+   > Hello, Kafka!
+   > This is a test message.
+   > Another message.
    ``` 
      
 8. Exécutez `kafka-console-consumer` pour consommer dans le topic `foo`:
