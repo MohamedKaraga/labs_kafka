@@ -46,8 +46,7 @@ Créez un fichier de configuration `server.properties` et configurez le broker.
 4. Créer les répertoires nécessaires
 
    ```bash
-   mkdir -p /var/lib/kafka/data
-   mkdir -p /var/lib/kafka/meta   
+   mkdir -p /var/lib/kafka/data && mkdir -p /var/lib/kafka/meta   
    ```
 
 5. Générer un nouvel ID pour votre cluster et formater le répertoire des métadonnées
