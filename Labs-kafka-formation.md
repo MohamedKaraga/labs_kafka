@@ -6,7 +6,7 @@ La configuration d’un cluster Kafka en mode KRaft (Kafka Raft) implique de con
 Le mode KRaft simplifie l'architecture de Kafka en gérant les métadonnées via un protocole de consensus interne.  
 Voici un guide étape par étape pour configurer un cluster Kafka en mode KRaft.
 
-**_Pré-requis_** : Assurez-vous que **JDK 8 ou une version supérieure** est installé et configuré sur votre système.
+**_Pré-requis_** : Assurez-vous que **JDK 17 ou une version supérieure** est installé et configuré sur votre système.
 
 1. Télécharger Kafka
 
