@@ -11,7 +11,7 @@ Voici un guide étape par étape pour configurer un cluster Kafka en mode KRaft.
 1. Télécharger Kafka
 
    ```bash
-   wget https://downloads.apache.org/kafka/3.4.0/kafka_2.13-4.0.0.tgz
+   wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
    ```
 
 2. Extraire le fichier téléchargé
