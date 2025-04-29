@@ -218,7 +218,17 @@ _**Ouvrez des fenêtres de terminal séparées pour les étapes suivantes**_
 
 7. Exécutez le consommateur avec les differentes configurations pour `fetch.min.bytes (5000000)`, `fetch.max.wait.ms (5000)` pour observer leurs effets sur la consommation des messages et les performances
 
-8. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
+8. Conversion d'un Consommateur Kafka avec Commit Automatique vers Commit Manuel
+
+Vous disposez actuellement d'un consommateur Kafka qui utilise le mécanisme de commit automatique des offsets. Cependant, votre équipe a identifié des problèmes potentiels de fiabilité dans le pipeline de données lors d'incidents système. Pour améliorer la robustesse de votre application, vous devez implémenter un mécanisme de commit manuel.
+
+Les objectifs sont : 
+
+- Comprendre les différences entre commit automatique et manuel dans Kafka
+- Implémenter une stratégie de commit manuel qui garantit le traitement "exactement une fois" (exactly-once)
+- Tester la résistance de votre solution aux pannes
+
+9. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
 
    ```bash
    docker-compose down -v
