@@ -214,6 +214,12 @@ docker-compose up -d broker control-center
 docker-compose logs broker
 ```
 
+#### 5. Arrêter le cluster
+```bash
+# Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
+docker-compose down -v
+```
+
 ---
 
 ## Lab 03 : Producer - 60min
