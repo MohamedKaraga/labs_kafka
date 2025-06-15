@@ -8,21 +8,28 @@
 - Produire et consommer des messages
 
 ### 📋 Prérequis
-- JDK 17+ installé
+- **JDK 11+ installé** (JDK 17+ recommandé pour Kafka 4.0)
 - Droits administrateur
+
+**💡 Choix de version :**
+- **Kafka 3.9** : Compatible avec Java 11+ (recommandé pour la compatibilité)
+- **Kafka 4.0** : Nécessite obligatoirement Java 17+
 
 ### 🛠️ Instructions
 
 #### 1. Télécharger et installer Kafka
 ```bash
-# Télécharger Kafka
-wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
+# Option A : Kafka 3.9 (compatible Java 11+) - RECOMMANDÉ
+wget https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz
+tar -xzf kafka_2.13-3.9.0.tgz
+cd kafka_2.13-3.9.0
 
-# Extraire
-tar -xzf kafka_2.13-4.0.0.tgz
-cd kafka_2.13-4.0.0
+# Option B : Kafka 4.0 (nécessite Java 17+)
+# wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
+# tar -xzf kafka_2.13-4.0.0.tgz
+# cd kafka_2.13-4.0.0
 
-# Vérifier Java (doit afficher version 17+)
+# Vérifier Java (doit afficher version 11+ pour Kafka 3.9 ou 17+ pour Kafka 4.0)
 java -version
 ```
 
@@ -87,11 +94,44 @@ bin/kafka-console-consumer.sh --topic test --from-beginning --bootstrap-server l
 
 ### 🔧 En cas de problème
 ```bash
+# Si erreur "UnsupportedClassVersionError" ou "class file version 61.0"
+# Cela signifie incompatibilité Java/Kafka
+java -version
+
+# Solutions selon la version Kafka choisie :
+# Pour Kafka 3.9 : Java 11+ suffit
+# Ubuntu/Debian: sudo apt update && sudo apt install openjdk-11-jdk
+# CentOS/RHEL: sudo yum install java-11-openjdk-devel
+# macOS: brew install openjdk@11
+
+# Pour Kafka 4.0 : Java 17+ obligatoire
+# Ubuntu/Debian: sudo apt update && sudo apt install openjdk-17-jdk
+# CentOS/RHEL: sudo yum install java-17-openjdk-devel
+# macOS: brew install openjdk@17
+
+# Puis définir JAVA_HOME si nécessaire
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+# ou sur macOS: export JAVA_HOME=/opt/homebrew/opt/openjdk@11
+
 # Si erreur de permissions
 sudo chown -R $(whoami):$(whoami) /var/lib/kafka
 
 # Si port occupé, tuer les processus Kafka
 ps aux | grep kafka | awk '{print $2}' | xargs kill -9
+
+# Si erreur "Invalid cluster.id" :
+# 1. Arrêter Kafka
+ps aux | grep kafka | awk '{print $2}' | xargs kill -9
+
+# 2. Nettoyer complètement les répertoires de données
+sudo rm -rf /var/lib/kafka/data/*
+sudo rm -rf /var/lib/kafka/meta/*
+
+# 3. Reformater avec un nouvel UUID
+bin/kafka-storage.sh format -t $(bin/kafka-storage.sh random-uuid) -c config/server.properties
+
+# 4. Redémarrer Kafka
+bin/kafka-server-start.sh config/server.properties
 ```
 
 ---
