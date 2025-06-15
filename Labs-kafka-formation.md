@@ -91,13 +91,7 @@ bin/kafka-console-consumer.sh --topic test --from-beginning --bootstrap-server l
 ```
 Formation Kafka avec Orsys
 Hello World Kafka
-Message de test numero 1
 {"event": "user_login", "user_id": 123, "timestamp": "2024-12-16T10:30:00Z"}
-Streaming de données en temps réel
-Apache Kafka producer test
-{"order_id": 456, "product": "Formation Developer", "amount": 1200}
-Test de performance Kafka
-Bienvenue dans l'écosystème Kafka
 {"sensor_id": "TEMP_001", "temperature": 22.5, "location": "Paris"}
 ```
 
