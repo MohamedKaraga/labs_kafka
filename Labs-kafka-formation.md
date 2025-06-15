@@ -1,6 +1,6 @@
 # Labs Kafka - Formation Developer
 
-## Lab 01 : Installation Sans Docker - 45min {collapsible="true"}
+## Lab 01 : Installation Sans Docker - 45min
 
 ### 🎯 Objectifs
 - Configurer Kafka en mode KRaft
@@ -96,7 +96,7 @@ ps aux | grep kafka | awk '{print $2}' | xargs kill -9
 
 ---
 
-## Lab 02 : Kafka avec Docker - 30min {collapsible="true"}
+## Lab 02 : Kafka avec Docker - 30min
 
 ### 🎯 Objectifs
 - Déployer Kafka avec Docker
