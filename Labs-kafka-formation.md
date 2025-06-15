@@ -1,166 +1,168 @@
-# Labs Kafka
+# Labs Kafka - Formation Developer
 
-## Lab 01 : Sans Docker {collapsible="true"}
+## Lab 01 : Installation Sans Docker - 45min {collapsible="true"}
 
-La configuration d’un cluster Kafka en mode KRaft (Kafka Raft) implique de configurer un broker pour fonctionner sans dépendre de Zookeeper.  
-Le mode KRaft simplifie l'architecture de Kafka en gérant les métadonnées via un protocole de consensus interne.  
-Voici un guide étape par étape pour configurer un cluster Kafka en mode KRaft.
+### 🎯 Objectifs
+- Configurer Kafka en mode KRaft
+- Créer et tester des topics
+- Produire et consommer des messages
 
-**_Pré-requis_** : Assurez-vous que **JDK 17 ou une version supérieure** est installé et configuré sur votre système.
+### 📋 Prérequis
+- JDK 17+ installé
+- Droits administrateur
 
-1. Télécharger Kafka
+### 🛠️ Instructions
 
-   ```bash
-   wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
-   ```
+#### 1. Télécharger et installer Kafka
+```bash
+# Télécharger Kafka
+wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
 
-2. Extraire le fichier téléchargé
+# Extraire
+tar -xzf kafka_2.13-4.0.0.tgz
+cd kafka_2.13-4.0.0
 
-   ```bash
-   tar -xzf kafka_2.13-4.0.0.tgz && cd kafka_2.13-4.0.0
-   ```
+# Vérifier Java (doit afficher version 17+)
+java -version
+```
 
-3. Configurer le Broker Kafka
+#### 2. Créer les répertoires et configurer
+```bash
+# Créer les dossiers de données
+sudo mkdir -p /var/lib/kafka/data
+sudo mkdir -p /var/lib/kafka/meta
+sudo chown -R $(whoami):$(whoami) /var/lib/kafka
+```
 
-Créez un fichier de configuration `server.properties` et configurez le broker.
+```bash
+# Créer la configuration dans config/server.properties
+cat > config/server.properties << EOF
+# Configuration KRaft
+process.roles=broker,controller
+node.id=1
+controller.quorum.voters=1@localhost:9093
 
-   ```bash
-   # Configurations spécifiques à KRaft
-   process.roles=broker,controller
-   node.id=1
-   controller.quorum.voters=1@localhost:9093
-   
-   # Listeners
-   listeners=PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
-   controller.listener.names=CONTROLLER
-   listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-   
-   # Répertoires des logs
-   log.dirs=/var/lib/kafka/data
-   metadata.log.dir=/var/lib/kafka/meta
-   
-   # Activer la création automatique des topics
-   auto.create.topics.enable=true
-   ```
+# Listeners
+listeners=PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
+controller.listener.names=CONTROLLER
+listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
 
-4. Créer les répertoires nécessaires
+# Répertoires
+log.dirs=/var/lib/kafka/data
+metadata.log.dir=/var/lib/kafka/meta
 
-   ```bash
-   mkdir -p /var/lib/kafka/data && mkdir -p /var/lib/kafka/meta   
-   ```
+# Options
+auto.create.topics.enable=true
+EOF
+```
 
-5. Générer un nouvel ID pour votre cluster et formater le répertoire des métadonnées
+#### 3. Formater et démarrer Kafka
+```bash
+# Générer un UUID et formater
+bin/kafka-storage.sh format -t $(bin/kafka-storage.sh random-uuid) -c config/server.properties
 
-   ```bash
-   bin/kafka-storage.sh format -t $(bin/kafka-storage.sh random-uuid) -c config/server.properties 
-   ```
+# Démarrer Kafka
+bin/kafka-server-start.sh config/server.properties
+```
 
-6. Démarrer le Broker Kafka
+#### 4. Tester dans de nouveaux terminaux
+```bash
+# Terminal 2 : Créer un topic
+bin/kafka-topics.sh --create --topic test --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
 
-   ```bash
-   bin/kafka-server-start.sh config/server.properties
-   ```
-   
-_**Ouvrez des fenêtres de terminal séparées pour les étapes suivantes**_
+# Décrire le topic
+bin/kafka-topics.sh --describe --topic test --bootstrap-server localhost:9092
 
+# Terminal 3 : Producer
+bin/kafka-console-producer.sh --topic test --bootstrap-server localhost:9092
 
-7. Vérifier le Cluster
+# Terminal 4 : Consumer
+bin/kafka-console-consumer.sh --topic test --from-beginning --bootstrap-server localhost:9092
+```
 
-   * Vérifiez les logs du broker : Assurez-vous qu’il n’y a pas d’erreurs, que le broker démarre correctement et qu’il participe au quorum KRaft.
-   * Création des topics : Utilisez l'outil CLI Kafka pour créer un topic et vérifiez qu'il est créé dans le cluster.
-      * créer d'abord le topic technique `__consumer_offsets`
-      ```bash
-      bin/kafka-topics.sh --create --topic __consumer_offsets --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
-      ```
-      * puis créer le topic metier `foo`
-      ```bash
-      bin/kafka-topics.sh --create --topic foo --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
-      ```
-      * Décrivez le topic
-      ```bash
-      bin/kafka-topics.sh --describe --topic foo --bootstrap-server localhost:9092
-      ```
-   * Arreter puis relancer le cluster
-   ```bash
-   bin/kafka-server-start.sh config/server.properties
-   ```
-7. Exécutez `kafka-console-producer` pour produire des messages dans le topic foo :
-   ```bash
-   bin/kafka-console-producer.sh --topic foo --bootstrap-server localhost:9092
-   ``` 
-   Exemple
+### ✅ Validation
+- [ ] Kafka démarre sans erreur dans le terminal 1
+- [ ] Topic `test` créé avec succès
+- [ ] Messages tapés dans le producer apparaissent dans le consumer
 
-   ```bash
-   > Hello, Kafka!
-   > This is a test message.
-   > Another message.
-   ``` 
-   
-8. Exécutez `kafka-console-consumer` pour consommer les messages du topic foo :
-   ```bash
-   bin/kafka-console-consumer.sh --topic foo --from-beginning --bootstrap-server localhost:9092
-   ```
+### 🔧 En cas de problème
+```bash
+# Si erreur de permissions
+sudo chown -R $(whoami):$(whoami) /var/lib/kafka
 
-## Lab 02 : Docker mode {collapsible="true"}
+# Si port occupé, tuer les processus Kafka
+ps aux | grep kafka | awk '{print $2}' | xargs kill -9
+```
 
-1. Téléchargez ou copiez le contenu du fichier Docker Compose de la plateforme Confluent en mode KRaft
+---
 
-   ```bash
-    wget https://raw.githubusercontent.com/MohamedKaraga/labs_kafka/refs/heads/master/docker-compose.yml
-   ```
+## Lab 02 : Kafka avec Docker - 30min {collapsible="true"}
 
-2. Analysez le fichier Docker Compose
-3. Démarrez le cluster Kafka avec l'option -d pour l'exécuter en mode détaché:
-   ```bash
-   docker-compose up -d broker control-center
-   ```
-   
-4. Affichez les conteneurs en cours d'exécution
+### 🎯 Objectifs
+- Déployer Kafka avec Docker
+- Utiliser Control Center pour le monitoring
+- Comprendre l'architecture conteneurisée
 
-   ```bash
-   docker-compose ps
-   ```
-   
-5. Exécuter dans la console du conteneur `broker`
-   ```bash
-   docker-compose exec broker /bin/bash
-   ```
-   
-**_Exécutez la commande suivante dans la console du conteneur `broker`_**
+### 📋 Prérequis
+- Docker et Docker Compose installés
+- 8GB RAM disponible
 
-6. Créer le topic `foo`:
-   ```bash
-   kafka-topics --bootstrap-server kafka:9092 \
-   --create \
-   --partitions 1 \
-   --replication-factor 1 \
-   --topic foo
-   ```   
-   
-7. Exécutez `kafka-console-producer` pour produire un message dans le topic `foo`:
-   ```bash
-   kafka-console-producer --bootstrap-server kafka:9092 --topic foo
-   ```
-   Exemple
+### 🛠️ Instructions
 
-   ```bash
-   > Hello, Kafka!
-   > This is a test message.
-   > Another message.
-   ``` 
-     
-8. Exécutez `kafka-console-consumer` pour consommer dans le topic `foo`:
-   ```bash
-   kafka-console-consumer \
-   --bootstrap-server kafka:9092 \
-   --from-beginning \
-   --topic foo
-   ```
-9. Arrêter le cluster Kafka avec l'option -v pour supprimer les volumes
+#### 1. Récupérer le fichier Docker Compose
+```bash
+# Télécharger la configuration
+wget https://raw.githubusercontent.com/MohamedKaraga/labs_kafka/refs/heads/master/docker-compose.yml
 
-   ```bash
-   docker-compose down -v
-   ```
+# Vérifier que Docker fonctionne
+docker ps
+```
+
+#### 2. Démarrer les services
+```bash
+# Démarrer Kafka et Control Center
+docker-compose up -d broker control-center
+
+# Vérifier le démarrage (attendre ~30 secondes)
+docker-compose ps
+```
+
+#### 3. Tester Kafka
+```bash
+# Entrer dans le conteneur broker
+docker-compose exec broker /bin/bash
+
+# Dans le conteneur : créer un topic
+kafka-topics --bootstrap-server broker:9092 --create --topic test --partitions 1 --replication-factor 1
+
+# Lister les topics
+kafka-topics --bootstrap-server broker:9092 --list
+```
+
+#### 4. Test Producer/Consumer
+```bash
+# Terminal 1 : Producer (dans le conteneur)
+kafka-console-producer --bootstrap-server broker:9092 --topic test
+
+# Terminal 2 : Consumer (nouveau terminal, entrer dans le conteneur)
+docker-compose exec broker /bin/bash
+kafka-console-consumer --bootstrap-server broker:9092 --from-beginning --topic test
+```
+
+### ✅ Validation
+- [ ] Conteneurs `broker` et `control-center` en statut "Up"
+- [ ] Control Center accessible sur http://localhost:9021
+- [ ] Messages échangés entre producer et consumer
+
+### 🔧 En cas de problème
+```bash
+# Redémarrer proprement
+docker-compose down -v
+docker-compose up -d broker control-center
+
+# Voir les logs en cas d'erreur
+docker-compose logs broker
+```
 
 ## Lab 03 : Producer {collapsible="true"}
 
