@@ -160,41 +160,48 @@ bin/kafka-server-start.sh config/server.properties
 ### 🛠️ Instructions
 
 #### 1. Récupérer le fichier Docker Compose
-```bash
 # Télécharger la configuration
+```bash
 wget https://raw.githubusercontent.com/MohamedKaraga/labs_kafka/refs/heads/master/docker-compose.yml
+```
 
 # Vérifier que Docker fonctionne
+```bash
 docker ps
 ```
 
 #### 2. Démarrer les services
-```bash
 # Démarrer Kafka et Control Center
+```bash
 docker-compose up -d broker control-center
 
 # Vérifier le démarrage (attendre ~30 secondes)
+```bash
 docker-compose ps
 ```
 
 #### 3. Tester Kafka
-```bash
 # Entrer dans le conteneur broker
+```bash
 docker-compose exec broker /bin/bash
-
+```
 # Dans le conteneur : créer un topic
+```bash
 kafka-topics --bootstrap-server broker:9092 --create --topic test --partitions 1 --replication-factor 1
-
+```
 # Lister les topics
+```bash
 kafka-topics --bootstrap-server broker:9092 --list
 ```
 
 #### 4. Test Producer/Consumer
-```bash
 # Terminal 1 : Producer (dans le conteneur)
+```bash
 kafka-console-producer --bootstrap-server broker:9092 --topic test
+```
 
 # Terminal 2 : Consumer (nouveau terminal, entrer dans le conteneur)
+```bash
 docker-compose exec broker /bin/bash
 kafka-console-consumer --bootstrap-server broker:9092 --from-beginning --topic test
 ```
