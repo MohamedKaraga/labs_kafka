@@ -22,17 +22,17 @@
 **Option A : Kafka 3.9 (compatible Java 11+) - RECOMMANDÉ**
 
 ```bash
-wget https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz
-tar -xzf kafka_2.13-3.9.0.tgz
-cd kafka_2.13-3.9.0
+wget https://downloads.apache.org/kafka/3.9.2/kafka_2.13-3.9.2.tgz
+tar -xzf kafka_2.13-3.9.2.tgz
+cd kafka_2.13-3.9.2
 ```
 
 **Option B : Kafka 4.0 (nécessite Java 17+)**
 
 ```bash
-wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
-tar -xzf kafka_2.13-4.0.0.tgz
-cd kafka_2.13-4.0.0
+wget https://downloads.apache.org/kafka/4.0.1/kafka_2.13-4.0.1.tgz
+tar -xzf kafka_2.13-4.0.1.tgz
+cd kafka_2.13-4.0.1
 ```
 
 **Vérifier Java**
